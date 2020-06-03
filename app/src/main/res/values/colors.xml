@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2A5E6E</color>
+    <color name="colorPrimaryDark">#0C181C</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="colorBackground">#020506</color>
+    <color name="colorNeutral">#9859696E</color>
+    <color name="colorText">#EFEFEF</color>
+
+    <color name="colorAnalyse">#38909d</color>
+    <color name="colorProtected">#9AD2F7</color>#38909d
+
+    <color name="colorDanger1">#420000</color>
+    <color name="colorDanger2">#490000</color>
+    <color name="colorDanger3">#5E0000</color>
+    <color name="colorDanger4">#8F0000</color>
+    <color name="colorDanger5">#D30000</color>
+</resources>

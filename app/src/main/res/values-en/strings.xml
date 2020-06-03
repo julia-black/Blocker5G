@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Blocker 5G</string>
+    <string name="start_scanner">Scanning</string>
+    <string name="launch">Enable protection</string>
+    <string name="unlaunch">Disable protection</string>
+    <string name="scan_1">Scanning a spectrum of signals...</string>
+    <string name="scan_2">Analysis of captured frequencies...</string>
+    <string name="scan_3">5G signal analysis...</string>
+    <string name="need_protection">Protection against harmful frequencies must be enabled</string>
+    <string name="launched_protection">Adverse signal suppression enabled</string>
+    <string name="level_danger">Signal danger level: %1$s</string>
+    <string name="you_safe">You are protected!</string>
+    <string name="not_connection">Signals not recognized</string>
+    <string name="need_connection">Internet connection required</string>
+</resources>
