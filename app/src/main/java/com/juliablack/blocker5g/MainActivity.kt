@@ -7,6 +7,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.gms.ads.*
 import com.juliablack.blocker5g.NetworkUtil.checkConnection
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -22,7 +23,26 @@ class MainActivity : AppCompatActivity() {
         init()
     }
 
+    override fun onResume() {
+        super.onResume()
+        adView.resume()
+        if (valueDanger > 0) {
+            showGradient()
+        }
+    }
+
+    override fun onPause() {
+        adView.pause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        adView.destroy()
+        super.onDestroy()
+    }
+
     private fun init() {
+        initAds()
         startAnalyse()
         buttonScan.setOnClickListener {
             startAnalyse()
@@ -34,6 +54,19 @@ class MainActivity : AppCompatActivity() {
                 launchProtection()
             }
         }
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this) {}
+
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf("ABCDEF012345"))
+                .build()
+        )
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
     private fun startAnalyse() {
