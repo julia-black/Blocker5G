@@ -45,9 +45,9 @@ object NetworkUtil {
                 TelephonyManager.NETWORK_TYPE_LTE,
                 TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> "4G"
                 TelephonyManager.NETWORK_TYPE_NR -> "5G"
-                else -> "?"
+                else -> null
             }
         }
-        return "?"
+        return null
     }
 }

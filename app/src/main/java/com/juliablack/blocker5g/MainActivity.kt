@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity() {
                 Handler().postDelayed({
                     valueDanger = checkConnection(this)
                     showView(result = valueDanger)
-                }, 1_500)
-            }, 1_500)
-        }, 1_500)
+                }, TIMEOUT_WORK)
+            }, TIMEOUT_WORK)
+        }, TIMEOUT_WORK)
     }
 
     private fun launchProtection() {
@@ -98,12 +98,10 @@ class MainActivity : AppCompatActivity() {
     ) {
         if (isAnalyse) {
             buttonScan.visibility = View.INVISIBLE
-            searchImage.visibility = View.VISIBLE
             stateText.visibility = View.VISIBLE
-            unactiveImage.visibility = View.INVISIBLE
+            searchImage.visibility = View.VISIBLE
             activeImage.visibility = View.INVISIBLE
             stateSubText.visibility = View.INVISIBLE
-            notConnectionImage.visibility = View.INVISIBLE
             buttonProtection.visibility = View.INVISIBLE
             showGradient(ContextCompat.getColor(this, R.color.colorAnalyse))
             stateText.text = getString(R.string.scan_1)
@@ -114,9 +112,13 @@ class MainActivity : AppCompatActivity() {
                 stateSubText.text = getString(R.string.need_connection)
                 searchImage.visibility = View.INVISIBLE
                 buttonScan.visibility = View.VISIBLE
-                unactiveImage.visibility = View.INVISIBLE
-                activeImage.visibility = View.INVISIBLE
-                notConnectionImage.visibility = View.VISIBLE
+                activeImage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.ic_no_signal
+                    )
+                )
+                activeImage.visibility = View.VISIBLE
                 buttonProtection.visibility = View.VISIBLE
                 buttonProtection.text = getString(R.string.launch)
                 buttonProtection.visibility = View.INVISIBLE
@@ -125,14 +127,19 @@ class MainActivity : AppCompatActivity() {
                 stateSubText.text = getString(R.string.need_protection)
 
                 stateSubText.visibility = if (result > 0) View.VISIBLE else View.INVISIBLE
-                unactiveImage.visibility = if (result > 0) View.VISIBLE else View.INVISIBLE
-                activeImage.visibility = if (result > 0) View.INVISIBLE else View.VISIBLE
+                activeImage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        if (result > 0)
+                            R.drawable.ic_unactive_shield
+                        else
+                            R.drawable.ic_active_shield
+                    )
+                )
+                activeImage.visibility = View.VISIBLE
                 buttonProtection.visibility = if (result > 0) View.VISIBLE else View.INVISIBLE
-
                 searchImage.visibility = View.INVISIBLE
                 buttonScan.visibility = View.VISIBLE
-                notConnectionImage.visibility = View.INVISIBLE
-
                 buttonProtection.text = getString(R.string.launch)
                 showGradient()
             }
@@ -149,9 +156,15 @@ class MainActivity : AppCompatActivity() {
                 if (isLaunchProtection) getString(R.string.launched_protection)
                 else getString(R.string.need_protection)
 
-            unactiveImage.visibility = if (isLaunchProtection) View.INVISIBLE else View.VISIBLE
-            notConnectionImage.visibility = View.INVISIBLE
-            activeImage.visibility = if (isLaunchProtection) View.VISIBLE else View.INVISIBLE
+            activeImage.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    if (isLaunchProtection)
+                        R.drawable.ic_active_shield
+                    else R.drawable.ic_unactive_shield
+                )
+            )
+            activeImage.visibility = View.VISIBLE
             buttonProtection.visibility = View.VISIBLE
 
             buttonProtection.text =
@@ -164,5 +177,9 @@ class MainActivity : AppCompatActivity() {
                 showGradient()
             }
         }
+    }
+
+    companion object {
+        const val TIMEOUT_WORK = 1_500L
     }
 }
