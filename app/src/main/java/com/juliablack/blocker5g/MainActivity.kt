@@ -98,13 +98,17 @@ class MainActivity : AppCompatActivity() {
         showGradient(
             ContextCompat.getColor(
                 this,
-                when (valueDanger) {
-                    1 -> R.color.colorDanger1
-                    2 -> R.color.colorDanger2
-                    3 -> R.color.colorDanger3
-                    4 -> R.color.colorDanger4
-                    5 -> R.color.colorDanger5
-                    else -> R.color.colorBackground
+                if (isLaunchProtection) {
+                    R.color.colorProtected
+                } else {
+                    when (valueDanger) {
+                        1 -> R.color.colorDanger1
+                        2 -> R.color.colorDanger2
+                        3 -> R.color.colorDanger3
+                        4 -> R.color.colorDanger4
+                        5 -> R.color.colorDanger5
+                        else -> R.color.colorBackground
+                    }
                 }
             )
         )
@@ -204,11 +208,7 @@ class MainActivity : AppCompatActivity() {
                 if (isLaunchProtection) getString(R.string.unlaunch)
                 else getString(R.string.launch)
 
-            if (isLaunchProtection) {
-                showGradient(ContextCompat.getColor(this, R.color.colorProtected))
-            } else {
-                showGradient()
-            }
+            showGradient()
         }
     }
 
