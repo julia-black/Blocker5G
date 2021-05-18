@@ -59,12 +59,6 @@ class MainActivity : AppCompatActivity() {
     private fun initAds() {
         MobileAds.initialize(this) {}
 
-        MobileAds.setRequestConfiguration(
-            RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("ABCDEF012345"))
-                .build()
-        )
-
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }
