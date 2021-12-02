@@ -7,14 +7,45 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.juliablack.blocker5g.NetworkUtil.checkConnection
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private var valueDanger = 0
     private var isLaunchProtection = false
+
+    private var appUpdateManager: AppUpdateManager? = null
+
+    private val snackbarDownloading by lazy {
+        Snackbar.make(
+            findViewById(R.id.container),
+            getString(R.string.loading),
+            Snackbar.LENGTH_INDEFINITE
+        )
+    }
+
+    private val listener = InstallStateUpdatedListener { state ->
+        when (state.installStatus()) {
+            InstallStatus.DOWNLOADING -> {
+                showSnackbarDownloading()
+            }
+            InstallStatus.DOWNLOADED -> {
+                showSnackbarForCompleteUpdate()
+            }
+            else -> {
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +59,9 @@ class MainActivity : AppCompatActivity() {
         if (valueDanger > 0) {
             showGradient()
         }
+
+        checkUpdates()
+        checkDownloadedUpdates()
     }
 
     override fun onPause() {
@@ -37,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         //   adView.destroy()
+        appUpdateManager?.unregisterListener(listener)
         super.onDestroy()
     }
 
@@ -75,6 +110,49 @@ class MainActivity : AppCompatActivity() {
                 }, TIMEOUT_WORK)
             }, TIMEOUT_WORK)
         }, TIMEOUT_WORK)
+    }
+
+    private fun checkUpdates() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        appUpdateManager?.registerListener(listener)
+
+        appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+            ) {
+                appUpdateManager?.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    UPDATE_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    private fun checkDownloadedUpdates() {
+        appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                showSnackbarForCompleteUpdate()
+            }
+        }
+    }
+
+    private fun showSnackbarForCompleteUpdate() {
+        Snackbar.make(
+            findViewById(R.id.container),
+            getString(R.string.downloaded),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getString(R.string.install)) { appUpdateManager?.completeUpdate() }
+            setActionTextColor(resources.getColor(R.color.colorAccent))
+            show()
+        }
+    }
+
+    private fun showSnackbarDownloading() {
+        snackbarDownloading.show()
     }
 
     private fun launchProtection() {
@@ -207,5 +285,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TIMEOUT_WORK = 1_500L
+        const val UPDATE_REQUEST_CODE = 12
     }
 }
