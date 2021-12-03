@@ -9,6 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         appUpdateManager?.registerListener(listener)
 
         appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            if (!isDownloading(appUpdateInfo) && appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
                 && appUpdateInfo.availableVersionCode() != Preference.getCanceledVersionCode(this)
             ) {
@@ -143,6 +144,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun isDownloading(appUpdateInfo: AppUpdateInfo?) =
+        appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADING || appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADED
 
     private fun checkDownloadedUpdates() {
         appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->

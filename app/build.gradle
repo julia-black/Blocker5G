@@ -10,7 +10,7 @@ android {
         applicationId "com.juliablack.blocker5g"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 12
+        versionCode 13
         versionName "1.4"
 
         multiDexEnabled true
