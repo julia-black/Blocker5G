@@ -1,5 +1,6 @@
 package com.juliablack.blocker5g
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private var isLaunchProtection = false
 
     private var appUpdateManager: AppUpdateManager? = null
+    private var newVersionCode: Int? = null
 
     private val snackbarDownloading by lazy {
         Snackbar.make(
@@ -75,6 +77,15 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UPDATE_REQUEST_CODE) {
+            if (resultCode == RESULT_CANCELED) {
+                Preference.saveCanceledUpdate(this, newVersionCode)
+            }
+        }
+    }
+
     private fun init() {
         initAds()
         startAnalyse()
@@ -120,7 +131,9 @@ class MainActivity : AppCompatActivity() {
         appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                && appUpdateInfo.availableVersionCode() != Preference.getCanceledVersionCode(this)
             ) {
+                newVersionCode = appUpdateInfo.availableVersionCode()
                 appUpdateManager?.startUpdateFlowForResult(
                     appUpdateInfo,
                     AppUpdateType.FLEXIBLE,
