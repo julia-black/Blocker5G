@@ -15,4 +15,6 @@
     <string name="downloaded">Update downloaded</string>
     <string name="install">Install</string>
     <string name="loading">Downloading…</string>
+    <string name="failed_download">Update download error</string>
+    <string name="retry">Retry</string>
 </resources>

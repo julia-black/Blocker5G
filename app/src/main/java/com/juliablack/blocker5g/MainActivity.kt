@@ -45,6 +45,9 @@ class MainActivity : AppCompatActivity() {
             InstallStatus.DOWNLOADED -> {
                 showSnackbarForCompleteUpdate()
             }
+            InstallStatus.FAILED, InstallStatus.CANCELED -> {
+                showSnackbarFailedUpdate()
+            }
             else -> {
             }
         }
@@ -64,7 +67,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         checkUpdates()
-        checkDownloadedUpdates()
     }
 
     override fun onPause() {
@@ -130,7 +132,10 @@ class MainActivity : AppCompatActivity() {
         appUpdateManager?.registerListener(listener)
 
         appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
-            if (!isDownloading(appUpdateInfo) && appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            if (isDownloaded(appUpdateInfo)) {
+                showSnackbarForCompleteUpdate()
+            } else if (!isDownloading(appUpdateInfo)
+                && appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
                 && appUpdateInfo.availableVersionCode() != Preference.getCanceledVersionCode(this)
             ) {
@@ -145,16 +150,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isDownloading(appUpdateInfo: AppUpdateInfo?) =
-        appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADING || appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADED
+    private fun isDownloaded(appUpdateInfo: AppUpdateInfo?) =
+        appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADED
 
-    private fun checkDownloadedUpdates() {
-        appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                showSnackbarForCompleteUpdate()
-            }
-        }
-    }
+    private fun isDownloading(appUpdateInfo: AppUpdateInfo?) =
+        appUpdateInfo?.installStatus() == InstallStatus.DOWNLOADING
+
 
     private fun showSnackbarForCompleteUpdate() {
         Snackbar.make(
@@ -170,6 +171,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSnackbarDownloading() {
         snackbarDownloading.show()
+    }
+
+    private fun showSnackbarFailedUpdate() {
+        Snackbar.make(
+            findViewById(R.id.container),
+            getString(R.string.failed_download),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getString(R.string.retry)) {
+                appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
+                    appUpdateManager?.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        AppUpdateType.FLEXIBLE,
+                        this@MainActivity,
+                        UPDATE_REQUEST_CODE
+                    )
+                }
+            }
+            setActionTextColor(resources.getColor(R.color.colorAccent))
+            show()
+        }
     }
 
     private fun launchProtection() {

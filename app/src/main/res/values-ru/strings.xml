@@ -15,4 +15,6 @@
     <string name="downloaded">Обновление загружено</string>
     <string name="install">Установить</string>
     <string name="loading">Загрузка…</string>
+    <string name="failed_download">Ошибка при загрузке обновления</string>
+    <string name="retry">Повторить</string>
 </resources>
