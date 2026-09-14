@@ -6,6 +6,7 @@
     <color name="colorBackground">#020506</color>
     <color name="colorNeutral">#9859696E</color>
     <color name="colorText">#EFEFEF</color>
+    <color name="ic_launcher_background">#000000</color>
 
     <color name="colorAnalyse">#38909d</color>
     <color name="colorProtected">#9AD2F7</color>#38909d
