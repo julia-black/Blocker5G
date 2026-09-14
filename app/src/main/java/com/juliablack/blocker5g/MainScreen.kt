@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -76,7 +77,8 @@ internal fun BlockerScreen(
     snackbarHostState: SnackbarHostState,
     onSettings: () -> Unit,
     onScan: () -> Unit,
-    onProtection: () -> Unit
+    onProtection: () -> Unit,
+    onPlantItClick: () -> Unit
 ) {
     val background = colorResource(R.color.colorBackground)
     val gradientColor = when {
@@ -108,6 +110,7 @@ internal fun BlockerScreen(
         else -> strings.getString(R.string.need_protection)
     }
     val showProtection = !isAnalysing && (isLaunchProtection || valueDanger > 0)
+    val showPlantIt = !isAnalysing && analyseStep == 0
 
     Box(
         modifier = Modifier
@@ -233,6 +236,30 @@ internal fun BlockerScreen(
             }
         }
 
+        if (showPlantIt) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+                    .clickable(onClick = onPlantItClick)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                androidx.compose.foundation.Image(
+                    painter = painterResource(R.drawable.plantit),
+                    contentDescription = strings.getString(R.string.play_plantit),
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = strings.getString(R.string.play_plantit),
+                    color = colorResource(R.color.colorText),
+                    fontSize = 16.sp,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+        }
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
@@ -313,7 +340,8 @@ private fun BlockerScreenPreview() {
             snackbarHostState = remember { SnackbarHostState() },
             onSettings = {},
             onScan = {},
-            onProtection = {}
+            onProtection = {},
+            onPlantItClick = {}
         )
     }
 }

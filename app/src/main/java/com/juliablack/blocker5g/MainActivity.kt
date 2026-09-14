@@ -3,6 +3,7 @@ package com.juliablack.blocker5g
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -103,7 +104,8 @@ class MainActivity : AppCompatActivity() {
                     onScan = ::startAnalyse,
                     onProtection = {
                         if (isLaunchProtection) unlaunchProtection() else launchProtection()
-                    }
+                    },
+                    onPlantItClick = ::openPlantIt
                 )
 
                 if (isLanguageDialogVisible) {
@@ -180,6 +182,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun unlaunchProtection() {
         isLaunchProtection = false
+    }
+
+    private fun openPlantIt() {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLANTIT_URL)))
     }
 
     private fun checkUpdates() {
@@ -263,5 +269,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TIMEOUT_WORK = 1_500L
         const val UPDATE_REQUEST_CODE = 12
+        const val PLANTIT_URL = "https://singlelab.cat/download.html"
     }
 }
