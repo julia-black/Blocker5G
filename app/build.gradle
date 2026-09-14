@@ -1,14 +1,26 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def releaseStoreFile = project.findProperty('releaseStoreFile')
+def releaseStorePassword = project.findProperty('releaseStorePassword')
+def releaseKeyAlias = project.findProperty('releaseKeyAlias')
+def releaseKeyPassword = project.findProperty('releaseKeyPassword')
+def releaseSigningConfigured = [
+        releaseStoreFile,
+        releaseStorePassword,
+        releaseKeyAlias,
+        releaseKeyPassword
+].every { it != null && it.toString().trim() }
+
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    namespace 'com.juliablack.blocker5g'
+    compileSdkVersion 36
+    buildToolsVersion '36.0.0'
 
     defaultConfig {
         applicationId "com.juliablack.blocker5g"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 36
         versionCode 13
         versionName "2.0"
 
@@ -22,13 +34,36 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.5'
+        kotlinCompilerExtensionVersion '1.5.15'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            release {
+                storeFile rootProject.file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (releaseSigningConfigured) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -45,7 +80,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview:1.0.5'
     debugImplementation 'androidx.compose.ui:ui-tooling:1.0.5'
     implementation 'androidx.compose.material:material:1.0.5'
-    implementation 'com.google.android.play:core-ktx:1.8.1'
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
     testImplementation 'junit:junit:4.12'
     implementation "androidx.multidex:multidex:2.0.1"
 
