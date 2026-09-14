@@ -17,4 +17,16 @@
     <string name="loading">Загрузка…</string>
     <string name="failed_download">Ошибка при загрузке обновления</string>
     <string name="retry">Повторить</string>
+    <string name="settings">Настройки</string>
+    <string name="language_dialog_title">Выберите язык</string>
+    <string name="language_system_default">Системный язык</string>
+    <string name="language_english">Английский</string>
+    <string name="language_spanish">Испанский</string>
+    <string name="language_portuguese">Португальский</string>
+    <string name="language_german">Немецкий</string>
+    <string name="language_polish">Польский</string>
+    <string name="language_ukrainian">Украинский</string>
+    <string name="language_russian">Русский</string>
+    <string name="ok">ОК</string>
+    <string name="cancel">Отмена</string>
 </resources>

@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Blocker 5G</string>
+    <string name="start_scanner">Scannen</string>
+    <string name="launch">Schutz aktivieren</string>
+    <string name="unlaunch">Schutz deaktivieren</string>
+    <string name="scan_1">Signalspektrum wird gescannt…</string>
+    <string name="scan_2">Erfasste Frequenzen werden analysiert…</string>
+    <string name="scan_3">5G-Signal wird analysiert…</string>
+    <string name="need_protection">Der Schutz vor schädlichen Frequenzen muss aktiviert werden</string>
+    <string name="launched_protection">Unterdrückung schädlicher Signale aktiviert</string>
+    <string name="level_danger">Gefahrenstufe des Signals: %1$s</string>
+    <string name="you_safe">Sie sind geschützt!</string>
+    <string name="not_connection">Signale nicht erkannt</string>
+    <string name="need_connection">Internetverbindung erforderlich</string>
+    <string name="downloaded">Update heruntergeladen</string>
+    <string name="install">Installieren</string>
+    <string name="loading">Wird heruntergeladen…</string>
+    <string name="failed_download">Fehler beim Herunterladen des Updates</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="language_dialog_title">Sprache auswählen</string>
+    <string name="language_system_default">Systemsprache</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_spanish">Spanisch</string>
+    <string name="language_portuguese">Portugiesisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_polish">Polnisch</string>
+    <string name="language_ukrainian">Ukrainisch</string>
+    <string name="language_russian">Russisch</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+</resources>

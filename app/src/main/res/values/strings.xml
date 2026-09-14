@@ -17,4 +17,16 @@
     <string name="loading">Downloading…</string>
     <string name="failed_download">Update download error</string>
     <string name="retry">Retry</string>
+    <string name="settings">Settings</string>
+    <string name="language_dialog_title">Select language</string>
+    <string name="language_system_default">System default</string>
+    <string name="language_english">English</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_german">German</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_russian">Russian</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>

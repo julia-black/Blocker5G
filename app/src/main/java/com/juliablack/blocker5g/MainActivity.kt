@@ -1,11 +1,13 @@
 package com.juliablack.blocker5g
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
@@ -23,16 +25,37 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private data class LanguageOption(val tag: String?, val name: Int)
+
+    private val languageOptions = listOf(
+        LanguageOption(null, R.string.language_system_default),
+        LanguageOption("en", R.string.language_english),
+        LanguageOption("es", R.string.language_spanish),
+        LanguageOption("pt", R.string.language_portuguese),
+        LanguageOption("de", R.string.language_german),
+        LanguageOption("pl", R.string.language_polish),
+        LanguageOption("uk", R.string.language_ukrainian),
+        LanguageOption("ru", R.string.language_russian)
+    )
+
     private var valueDanger = 0
     private var isLaunchProtection = false
+    private var analyseStep = 0
+    private var systemBaseContext: Context? = null
+    private lateinit var languageContext: Context
 
     private var appUpdateManager: AppUpdateManager? = null
     private var newVersionCode: Int? = null
 
+    override fun attachBaseContext(newBase: Context) {
+        systemBaseContext = newBase
+        super.attachBaseContext(Preference.applyLanguage(newBase))
+    }
+
     private val snackbarDownloading by lazy {
         Snackbar.make(
             findViewById(R.id.container),
-            getString(R.string.loading),
+            localizedString(R.string.loading),
             Snackbar.LENGTH_INDEFINITE
         )
     }
@@ -56,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        languageContext = Preference.applyLanguage(systemBaseContext ?: this)
         init()
     }
 
@@ -92,6 +116,9 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         initAds()
         startAnalyse()
+        buttonSettings.setOnClickListener {
+            showLanguageDialog()
+        }
         buttonScan.setOnClickListener {
             startAnalyse()
         }
@@ -104,6 +131,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLanguageDialog() {
+        val selectedLanguage = Preference.getLanguageTag(this)
+        val selectedIndex = languageOptions.indexOfFirst { it.tag == selectedLanguage }
+            .takeIf { it >= 0 } ?: 0
+        val labels = languageOptions.map { localizedString(it.name) }.toTypedArray()
+        var pendingIndex = selectedIndex
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(localizedString(R.string.language_dialog_title))
+            .setSingleChoiceItems(labels, selectedIndex) { _, which ->
+                pendingIndex = which
+            }
+            .setPositiveButton(localizedString(R.string.ok)) { _, _ ->
+                val selectedOption = languageOptions[pendingIndex]
+                if (selectedOption.tag != selectedLanguage) {
+                    Preference.saveLanguageTag(this, selectedOption.tag)
+                    languageContext = Preference.applyLanguage(systemBaseContext ?: this)
+                    refreshLocalizedContent()
+                }
+            }
+            .setNegativeButton(localizedString(R.string.cancel), null)
+            .show()
+    }
+
+    private fun localizedString(@StringRes resourceId: Int, vararg formatArgs: Any): String =
+        languageContext.getString(resourceId, *formatArgs)
+
+    private fun refreshLocalizedContent() {
+        buttonSettings.contentDescription = localizedString(R.string.settings)
+        buttonScan.text = localizedString(R.string.start_scanner)
+
+        if (searchImage.visibility == View.VISIBLE) {
+            stateText.text = when (analyseStep) {
+                2 -> localizedString(R.string.scan_2)
+                3 -> localizedString(R.string.scan_3)
+                else -> localizedString(R.string.scan_1)
+            }
+        } else if (isLaunchProtection) {
+            showView(isLaunchProtection = true)
+        } else {
+            showView(result = valueDanger)
+        }
+    }
+
     private fun initAds() {
 //        MobileAds.initialize(this) {}
 //
@@ -112,14 +183,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startAnalyse() {
+        analyseStep = 1
         showView(isAnalyse = true)
         Handler().postDelayed({
-            stateText.text = getString(R.string.scan_2)
+            analyseStep = 2
+            stateText.text = localizedString(R.string.scan_2)
 
             Handler().postDelayed({
-                stateText.text = getString(R.string.scan_3)
+                analyseStep = 3
+                stateText.text = localizedString(R.string.scan_3)
                 Handler().postDelayed({
                     valueDanger = checkConnection(this)
+                    analyseStep = 0
                     showView(result = valueDanger)
                 }, TIMEOUT_WORK)
             }, TIMEOUT_WORK)
@@ -160,10 +235,10 @@ class MainActivity : AppCompatActivity() {
     private fun showSnackbarForCompleteUpdate() {
         Snackbar.make(
             findViewById(R.id.container),
-            getString(R.string.downloaded),
+            localizedString(R.string.downloaded),
             Snackbar.LENGTH_INDEFINITE
         ).apply {
-            setAction(getString(R.string.install)) { appUpdateManager?.completeUpdate() }
+            setAction(localizedString(R.string.install)) { appUpdateManager?.completeUpdate() }
             setActionTextColor(resources.getColor(R.color.colorAccent))
             show()
         }
@@ -176,10 +251,10 @@ class MainActivity : AppCompatActivity() {
     private fun showSnackbarFailedUpdate() {
         Snackbar.make(
             findViewById(R.id.container),
-            getString(R.string.failed_download),
+            localizedString(R.string.failed_download),
             Snackbar.LENGTH_INDEFINITE
         ).apply {
-            setAction(getString(R.string.retry)) {
+            setAction(localizedString(R.string.retry)) {
                 appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
                     appUpdateManager?.startUpdateFlowForResult(
                         appUpdateInfo,
@@ -251,12 +326,12 @@ class MainActivity : AppCompatActivity() {
             stateSubText.visibility = View.INVISIBLE
             buttonProtection.visibility = View.INVISIBLE
             showGradient(ContextCompat.getColor(this, R.color.colorAnalyse))
-            stateText.text = getString(R.string.scan_1)
+            stateText.text = localizedString(R.string.scan_1)
         } else if (result != null) {
             if (result == -1) {
-                stateText.text = getString(R.string.not_connection)
+                stateText.text = localizedString(R.string.not_connection)
                 stateSubText.visibility = View.VISIBLE
-                stateSubText.text = getString(R.string.need_connection)
+                stateSubText.text = localizedString(R.string.need_connection)
                 searchImage.visibility = View.INVISIBLE
                 buttonScan.visibility = View.VISIBLE
                 activeImage.setImageDrawable(
@@ -267,11 +342,11 @@ class MainActivity : AppCompatActivity() {
                 )
                 activeImage.visibility = View.VISIBLE
                 buttonProtection.visibility = View.VISIBLE
-                buttonProtection.text = getString(R.string.launch)
+                buttonProtection.text = localizedString(R.string.launch)
                 buttonProtection.visibility = View.INVISIBLE
             } else {
-                stateText.text = getString(R.string.level_danger, result.toString())
-                stateSubText.text = getString(R.string.need_protection)
+                stateText.text = localizedString(R.string.level_danger, result.toString())
+                stateSubText.text = localizedString(R.string.need_protection)
 
                 stateSubText.visibility = if (result > 0) View.VISIBLE else View.INVISIBLE
                 activeImage.setImageDrawable(
@@ -287,21 +362,21 @@ class MainActivity : AppCompatActivity() {
                 buttonProtection.visibility = if (result > 0) View.VISIBLE else View.INVISIBLE
                 searchImage.visibility = View.INVISIBLE
                 buttonScan.visibility = View.VISIBLE
-                buttonProtection.text = getString(R.string.launch)
+                buttonProtection.text = localizedString(R.string.launch)
                 showGradient()
             }
         } else {
             stateText.text =
-                if (isLaunchProtection) getString(R.string.you_safe)
-                else getString(R.string.level_danger, result.toString())
+                if (isLaunchProtection) localizedString(R.string.you_safe)
+                else localizedString(R.string.level_danger, result.toString())
 
             searchImage.visibility = View.INVISIBLE
             buttonScan.visibility = View.VISIBLE
             stateSubText.visibility = View.VISIBLE
 
             stateSubText.text =
-                if (isLaunchProtection) getString(R.string.launched_protection)
-                else getString(R.string.need_protection)
+                if (isLaunchProtection) localizedString(R.string.launched_protection)
+                else localizedString(R.string.need_protection)
 
             activeImage.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -315,8 +390,8 @@ class MainActivity : AppCompatActivity() {
             buttonProtection.visibility = View.VISIBLE
 
             buttonProtection.text =
-                if (isLaunchProtection) getString(R.string.unlaunch)
-                else getString(R.string.launch)
+                if (isLaunchProtection) localizedString(R.string.unlaunch)
+                else localizedString(R.string.launch)
 
             showGradient()
         }

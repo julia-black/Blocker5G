@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Blocker 5G</string>
+    <string name="start_scanner">Сканування</string>
+    <string name="launch">Увімкнути захист</string>
+    <string name="unlaunch">Вимкнути захист</string>
+    <string name="scan_1">Сканування спектра сигналів…</string>
+    <string name="scan_2">Аналіз перехоплених частот…</string>
+    <string name="scan_3">Аналіз сигналу 5G…</string>
+    <string name="need_protection">Необхідно увімкнути захист від шкідливих частот</string>
+    <string name="launched_protection">Придушення несприятливих сигналів увімкнено</string>
+    <string name="level_danger">Рівень небезпеки сигналу: %1$s</string>
+    <string name="you_safe">Ви захищені!</string>
+    <string name="not_connection">Сигнали не розпізнано</string>
+    <string name="need_connection">Потрібне підключення до інтернету</string>
+    <string name="downloaded">Оновлення завантажено</string>
+    <string name="install">Встановити</string>
+    <string name="loading">Завантаження…</string>
+    <string name="failed_download">Помилка завантаження оновлення</string>
+    <string name="retry">Повторити</string>
+    <string name="settings">Налаштування</string>
+    <string name="language_dialog_title">Виберіть мову</string>
+    <string name="language_system_default">Системна мова</string>
+    <string name="language_english">Англійська</string>
+    <string name="language_spanish">Іспанська</string>
+    <string name="language_portuguese">Португальська</string>
+    <string name="language_german">Німецька</string>
+    <string name="language_polish">Польська</string>
+    <string name="language_ukrainian">Українська</string>
+    <string name="language_russian">Російська</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Скасувати</string>
+</resources>
