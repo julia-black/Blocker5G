@@ -7,6 +7,7 @@ import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
 import kotlin.math.min
+import androidx.core.graphics.withTranslation
 
 @Suppress("DEPRECATION")
 class RadarAnimationView @JvmOverloads constructor(
@@ -35,11 +36,10 @@ class RadarAnimationView @JvmOverloads constructor(
         val left = (width - scaledWidth) / 2f
         val top = (height - scaledHeight) / 2f
 
-        canvas.save()
-        canvas.translate(left, top)
-        canvas.scale(scale, scale)
-        movie.draw(canvas, 0f, 0f)
-        canvas.restore()
+        canvas.withTranslation(left, top) {
+            scale(scale, scale)
+            movie.draw(this, 0f, 0f)
+        }
 
         postInvalidateOnAnimation()
     }
